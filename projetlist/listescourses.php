@@ -5,13 +5,12 @@ require('./config/connect.php');
 
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>Document</title>
 </head>
-
 <body>
     <table class="table">
         <thead>
@@ -24,18 +23,18 @@ require('./config/connect.php');
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT * FROM `users` inner join `list` on users.id_user = list.id_user";
-            $result = $dbh->query($sql);
-            $nb = $result->fetchAll();
-            foreach ($nb as $key => $value) {
-                if ($value['id_user'] == $_GET['id']) {
+            $sql = "SELECT * FROM `users` inner join `list` on users.id_user = list.id_user where list.id_user = :iduser";
+            $sth = $dbh->prepare($sql);
+            $sth->bindParam(':iduser', $_GET['id'], PDO::PARAM_INT);
+            $sth->execute();
+            $nb = $sth->fetchAll();
+            foreach ($nb as $value) {
                     echo "<tr>";
-                    echo "<th>" . $value['id_user'] . "</th>";
-                    echo "<th>" . $value['name'] . "</th>";
+                    echo "<th>" . $value['id_list'] . "</th>";
+                    echo "<th>" . utf8_encode($value['name']) . "</th>";
                     echo "<th>" . $value['total_price'] . "</th>";
-                    echo "<th><a href=listarticles?id=" . $nb[$key]["id_list"] . ">Voir les articles</a></th>";
+                    echo "<th><a href=listarticles?id=" . $value["id_list"] . ">Voir les articles</a></th>";
                     echo "</tr>";
-                }
             }
             ?>
         </tbody>

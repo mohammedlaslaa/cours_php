@@ -1,5 +1,22 @@
 <?php
 require('./config/connect.php');
+require('./config/function.php');
+
+if (isset($_GET['warning'])) {
+    echo "<p class='text-center text-white bg-danger'>Attention impossible de supprimer l'utilisateur en vue de ses dépendances, il a donc été désactiver</p>";
+}
+$sql = "SELECT * from users";
+$result = $dbh->query($sql);
+$nb = $result->fetchAll();
+$count = $result->rowCount();
+
+if(isset($_GET['desactivateuser'])){
+    isActivate($dbh, $_GET['desactivateuser'], 0);
+}
+
+if(isset($_GET['activateuser'])){
+    isActivate($dbh, $_GET['activateuser'], 1);
+}
 ?>
 
 <!DOCTYPE html>
@@ -14,32 +31,39 @@ require('./config/connect.php');
 
 <body>
     <table class="table">
+        <?php $resultcount = ($count>1) ? "Il y a $count utilisateurs" : "Il y a $count utilisateur"; ?>
+        <p><?= $resultcount ?></p>
         <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">FirstName</th>
                 <th scope="col">LastName</th>
                 <th scope="col">Email</th>
-                <th scope="col">List</th>
+                <th scope="col">Listes</th>
+                <th scope="col">Etat du compte</th>
+                <th scope="col">Modifier</th>
+                <th scope="col">Suppression</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql = "SELECT * from users";
-            $result = $dbh->query($sql);
-            $nb = $result->fetchAll();
             foreach ($nb as $key => $value) {
+                $valueActivate = ($value["activate"] == 0) ? "<th> Inactif <a href=?activateuser=" . $value['id_user'] . ">Activer</a></th>" : "<th> Actif <a href=?desactivateuser=" . $value['id_user'] . ">Désactiver</a></th>";
                 echo "<tr>";
                 echo "<th>" . $value["id_user"] . "</th>";
-                echo "<th>" . $value["name"] . "</th>";
-                echo "<th>" . $value["firstname"] . "</th>";
+                echo "<th>" . utf8_encode($value["name"]) . "</th>";
+                echo "<th>" . utf8_encode($value["firstname"]) . "</th>";
                 echo "<th>" . $value["email"] . "</th>";
-                echo "<th><a href=listescourses?id=" . $nb[$key]["id_user"] . ">Voir les listes</a></th>";
+                echo "<th><a href=listescourses?id=" . $value["id_user"] . ">Voir les listes</a></th>";
+                echo $valueActivate;
+                echo "<th><a href=updateuser?id=" . $value["id_user"] . ">Modifier un utilisateur</a></th>";
+                echo "<th><a href=deleteuser?id=" . $value["id_user"] . ">Supprimer</a></th>";
                 echo "</tr>";
             }
             ?>
         </tbody>
     </table>
+    <button type="button" class="btn btn-primary"><a href="adduser.php" class="text-white text-decoration-none">Créer un utilisateur</a></button>
 </body>
 
 </html>
