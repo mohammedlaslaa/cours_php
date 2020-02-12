@@ -5,8 +5,7 @@ require('./config/function.php');
 $sql = "SELECT * FROM `users` WHERE users.id_user = :id";
 $dbh->query($sql);
 $id = htmlspecialchars($_GET['id']);
-
-
+var_dump($dbh);
 // try {
 //     $dbh->beginTransaction();
 //     $dbh->commit();
@@ -15,7 +14,6 @@ $id = htmlspecialchars($_GET['id']);
 // }
 
 if (isset($_GET['id'])) {
-    $sql = "DELETE FROM `users` WHERE users.id_user = :id";
     $sth = $dbh->delete('users', ['users.id_user' => $id]);
     // Try catch and throw exception
     // try {
@@ -29,10 +27,10 @@ if (isset($_GET['id'])) {
     //     $dbh->rollBack();
     //     var_dump($e->getMessage());
     // }
-    if (!$dbh->getError()) {
-        header('Location: index.php');
-    } else {
+    if ($dbh->getError()) {
         isActivate($dbh, $_GET['desactivateuser'], 0);
-        header('Location: index.php?warning');
+        // header('Location: index.php?warning');
+    } else {
+        // header('Location: index.php');
     }
 }

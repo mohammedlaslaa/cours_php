@@ -12,6 +12,7 @@ if (isset($_POST['lastname'])) {
   $pwd = $_POST['pwd'];
 
   $dbh->insert('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd]);
+  header("Location: index.php");
 }
 
 ?>

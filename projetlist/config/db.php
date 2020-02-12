@@ -15,7 +15,6 @@ class Db
     private function __construct()
     {
         try {
-
             $this->_pdo = new PDO('mysql:dbname=' . DB_NAME . ';host=' . DB_ROOT, DB_USER, DB_PWD);
             $this->_pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -29,13 +28,17 @@ class Db
         // foreach($array as $key => $value){
         //     self::$_sth->bindParam($key, $value);
         // }
-        
-        if ($this->_sth->execute($array)) {
-            $this->_res = $this->_sth->fetchAll();
-            $this->_rowCount = $this->_sth->rowCount();
-            $this->_lastInsertId = $this->_pdo->lastInsertId();
-        } else {
+        try {
+            $this->_pdo->beginTransaction();
+            if ($this->_sth->execute($array)) {
+                $this->_pdo->commit();
+                $this->_res = $this->_sth->fetchAll();
+                $this->_rowCount = $this->_sth->rowCount();
+                $this->_lastInsertId = $this->_pdo->lastInsertId();
+            }
+        } catch (Exception $e) {
             $this->_error = true;
+            echo "Error !!!!" . $e->getMessage();
         }
     }
 
@@ -55,7 +58,7 @@ class Db
         $arrayVal = [];
         $keyFinal = [];
         $wherereq = "";
-        $update= "";
+        $update = "";
 
         foreach ($array as $key => $value) {
             $arrayVal[':' . $key] = $value;
@@ -63,8 +66,8 @@ class Db
         }
 
         foreach ($keyFinal as $key => $value) {
-            if($keyFinal)
-            $update .= $key . "=" . $value . ", ";
+            if ($keyFinal)
+                $update .= $key . "=" . $value . ", ";
         }
 
         foreach ($where as $key => $value) {
