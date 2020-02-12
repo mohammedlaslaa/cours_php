@@ -1,5 +1,5 @@
 <?php
-require('./config/connect.php');
+require('./config/db.php');
 $sql = "SELECT * FROM `users` WHERE users.id_user = :id";
 $sth = $dbh->prepare($sql);
 $sth->bindParam(':id', $_GET['id']);

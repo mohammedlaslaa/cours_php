@@ -1,9 +1,7 @@
 <?php
-require('./config/connect.php');
+require('./config/db.php');
 
 if (isset($_POST['lastname'])) {
-  $sql = "INSERT INTO `users`(`name`, `firstname`, `address`, `zipcode`, `city`, `email`, `password`) VALUES (:lastname, :firstname, :adress, :zipcode, :city, :mail, :pwd)";
-  $sth = $dbh->prepare($sql);
 
   $lastname = htmlspecialchars($_POST['lastname']);
   $firstname = htmlspecialchars($_POST['firstname']);
@@ -11,17 +9,9 @@ if (isset($_POST['lastname'])) {
   $zipcode = htmlspecialchars($_POST['zipcode']);
   $city = htmlspecialchars($_POST['city']);
   $mail = htmlspecialchars($_POST['mail']);
-  $pwd = utf8_encode(htmlspecialchars($_POST['pwd']));
+  $pwd = $_POST['pwd'];
 
-  $sth->bindParam(':lastname', $lastname, PDO::PARAM_STR, 12);
-  $sth->bindParam(':firstname', $firstname, PDO::PARAM_STR, 12);
-  $sth->bindParam(':adress', $address, PDO::PARAM_STR, 12);
-  $sth->bindParam(':zipcode', $zipcode, PDO::PARAM_INT);
-  $sth->bindParam(':city', $city, PDO::PARAM_STR, 12);
-  $sth->bindParam(':mail', $mail, PDO::PARAM_STR, 12);
-  $sth->bindParam(':pwd', $pwd, PDO::PARAM_STR, 12);
-  
-  if($sth->execute()) header('Location: index.php');
+  $dbh->insert('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd]);
 }
 
 ?>

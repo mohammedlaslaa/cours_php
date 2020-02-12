@@ -1,14 +1,15 @@
 <?php
-require('./config/connect.php');
+require('./config/db.php');
 require('./config/function.php');
 
 if (isset($_GET['warning'])) {
     echo "<p class='text-center text-white bg-danger'>Attention impossible de supprimer l'utilisateur en vue de ses dépendances, il a donc été désactiver</p>";
 }
+
 $sql = "SELECT * from users";
-$result = $dbh->query($sql);
-$nb = $result->fetchAll();
-$count = $result->rowCount();
+$dbh->query($sql);
+$nb = $dbh->getResult();
+$count = $dbh->getRowCount();
 
 if(isset($_GET['desactivateuser'])){
     isActivate($dbh, $_GET['desactivateuser'], 0);

@@ -1,5 +1,5 @@
 <?php
-require('./config/connect.php');
+require('./config/db.php');
 ?>
 
 
@@ -23,12 +23,17 @@ require('./config/connect.php');
         </thead>
         <tbody>
             <?php
+            // $sql = "SELECT * FROM `users` inner join `list` on users.id_user = list.id_user where list.id_user = :iduser";
+            // $sth = $dbh->prepare($sql);
+            // $sth->bindParam(':iduser', $_GET['id'], PDO::PARAM_INT);
+            // $sth->execute();
+            // $nb = $sth->fetchAll();
+
             $sql = "SELECT * FROM `users` inner join `list` on users.id_user = list.id_user where list.id_user = :iduser";
-            $sth = $dbh->prepare($sql);
-            $sth->bindParam(':iduser', $_GET['id'], PDO::PARAM_INT);
-            $sth->execute();
-            $nb = $sth->fetchAll();
-            foreach ($nb as $value) {
+            $id = [':iduser' => $_GET['id']];
+            $dbh->query($sql, $id);
+            $sth = $dbh->getResult();
+            foreach ($sth as $value) {
                     echo "<tr>";
                     echo "<th>" . $value['id_list'] . "</th>";
                     echo "<th>" . utf8_encode($value['name']) . "</th>";

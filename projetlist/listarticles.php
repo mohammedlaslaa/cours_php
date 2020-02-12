@@ -1,8 +1,12 @@
 <?php
-require('./config/connect.php');
+require('./config/db.php');
+
+// $sql = 'SELECT * FROM `users` where id_user=:id';
+// $id = [':id' => $_GET['id']];
+
+// Db::query($sql, $id);
+
 ?>
-
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -25,19 +29,28 @@ require('./config/connect.php');
         </thead>
         <tbody>
             <?php
-            // Securisation sqli
-
-            // $sth = $dbh->prepare("SELECT * FROM `list_art` inner join article on list_art.id_art = article.id_art where list_art.id_list = ?");
-            // $sth->execute(array($_GET['id']));
-
-            $sth = $dbh->prepare("SELECT * FROM `list_art` inner join article on list_art.id_art = article.id_art where list_art.id_list = :idlist");
-            $sth->bindParam(':idlist', $_GET['id'], PDO::PARAM_INT);
-            $sth->execute(array(":idlist" => $_GET['id']));
+            
+            // first method
 
             // $sql = "SELECT * FROM `list_art` inner join article on list_art.id_art = article.id_art where list_art.id_list = {$_GET['id']}";
             // $result = $dbh->query($sql);
-            $nb = $sth->fetchAll();
-            foreach ($nb as $value) {
+
+            // second method
+
+            // Securisation sqli must have to prepare
+            // $sth = $dbh->prepare("SELECT * FROM `list_art` inner join article on list_art.id_art = article.id_art where list_art.id_list = :idlist");
+            // $sth->bindParam(':idlist', $_GET['id'], PDO::PARAM_INT);
+            // $sth->execute(array(":idlist" => $_GET['id']));
+            // $nb = $sth->fetchAll();
+
+            // third method using the singleton
+
+            $sql = "SELECT * FROM `list_art` inner join article on list_art.id_art = article.id_art where list_art.id_list = :idlist";
+            $id = [':idlist' => $_GET['id']];
+            $dbh->query($sql, $id);
+            $sth = $dbh->getResult();
+    
+            foreach ($sth as $value) {
                 if ($value['id_list'] == $_GET['id']) {
                     echo "<tr>";
                     echo "<th>" . $value['id_list'] . "</th>";

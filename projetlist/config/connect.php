@@ -1,18 +1,15 @@
 <?php
 
-$dsn = 'mysql:dbname=bdd_app_course;host=127.0.0.1';
-$user = 'root';
-$password = '';
 
-try {
-    $dbh = new PDO($dsn, $user, $password);
-} catch (PDOException $e) {
-    echo 'Connexion échouée : ' . $e->getMessage();
-}
+// $dsn = 'mysql:dbname=bdd_app_course;host=127.0.0.1';
+// $user = 'root';
+// $password = '';
 
-$dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-
+// try {
+//     $dbh = new PDO($dsn, $user, $password);
+// } catch (PDOException $e) {
+//     echo 'Connexion échouée : ' . $e->getMessage();
+// }
 
 // $adduser = "INSERT INTO `users`(`name`, `firstname`, `address`, `zipcode`, `city`, `email`, `password`) VALUES ('Président', 'Nom', 'Perlimpimpim', 75000, 'Paris', 'elyse@m.fr', 'parigo')";
 // $dbh->query($adduser);
