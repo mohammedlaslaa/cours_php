@@ -1,26 +1,22 @@
 <?php
 require('./config/db.php');
+require('./config/function.php');
+
 $sql = "SELECT * FROM `users` WHERE users.id_user = :id";
-$sth = $dbh->prepare($sql);
-$sth->bindParam(':id', $_GET['id']);
+$dbh->query($sql);
+$id = htmlspecialchars($_GET['id']);
 
-try {
-    $dbh->beginTransaction();
-    $sth->execute();
-    $dbh->commit();
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
 
-$user = $sth->fetchObject();
+// try {
+//     $dbh->beginTransaction();
+//     $dbh->commit();
+// } catch (Exception $e) {
+//     echo $e->getMessage();
+// }
 
 if (isset($_GET['id'])) {
-
     $sql = "DELETE FROM `users` WHERE users.id_user = :id";
-    $sth = $dbh->prepare($sql);
-    $id = htmlspecialchars($_GET['id']);
-    $sth->bindParam(':id', $id);
-
+    $sth = $dbh->delete('users', ['users.id_user' => $id]);
     // Try catch and throw exception
     // try {
     //     $dbh->beginTransaction();
@@ -33,15 +29,10 @@ if (isset($_GET['id'])) {
     //     $dbh->rollBack();
     //     var_dump($e->getMessage());
     // }
-
-    if ($sth->execute()) {
+    if (!$dbh->getError()) {
         header('Location: index.php');
     } else {
-        $sql = "UPDATE `users` SET `activate`=:val where users.id_user = :id";
-        $sth = $dbh->prepare($sql);
-        $val = 0;
-        $sth->bindParam(':val', $val, PDO::PARAM_INT);
-        $sth->bindParam(':id', $_GET['id']);
-        if ($sth->execute()) header('Location: index.php?warning');
+        isActivate($dbh, $_GET['desactivateuser'], 0);
+        header('Location: index.php?warning');
     }
 }

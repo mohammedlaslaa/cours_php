@@ -5,7 +5,6 @@ require('./config/function.php');
 if (isset($_GET['warning'])) {
     echo "<p class='text-center text-white bg-danger'>Attention impossible de supprimer l'utilisateur en vue de ses dépendances, il a donc été désactiver</p>";
 }
-
 $sql = "SELECT * from users";
 $dbh->query($sql);
 $nb = $dbh->getResult();

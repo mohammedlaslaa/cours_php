@@ -9,7 +9,6 @@ $user = $dbh->getResult();
 if (isset($_POST['lastname'])) {
 
   $sql = "UPDATE `users` SET `name`=:lastname,`firstname`=:firstname,`address`=:address,`zipcode`=:zipcode,`city`=:city,`email`=:mail,`password`=:pwd where users.id_user = :id";
-
   
   $lastname = htmlspecialchars($_POST['lastname']);
   $firstname = htmlspecialchars($_POST['firstname']);
@@ -20,6 +19,7 @@ if (isset($_POST['lastname'])) {
   $pwd = utf8_encode(htmlspecialchars($_POST['pwd']));
   $getid = $_GET['id'];
   $dbh->update('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd], ["users.id_user" => $getid]);
+  header("Location: index.php");
 }
 
 ?>

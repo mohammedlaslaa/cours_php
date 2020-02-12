@@ -29,6 +29,7 @@ class Db
         // foreach($array as $key => $value){
         //     self::$_sth->bindParam($key, $value);
         // }
+        
         if ($this->_sth->execute($array)) {
             $this->_res = $this->_sth->fetchAll();
             $this->_rowCount = $this->_sth->rowCount();
@@ -38,7 +39,7 @@ class Db
         }
     }
 
-    function insert($tableName, $array, $where = "")
+    function insert($tableName, $array)
     {
         $insertToQuery = [];
 
@@ -51,17 +52,40 @@ class Db
 
     function update($tableName, $array, $where)
     {
-        $updateQuery = [];
-        $array1 = [];
+        $arrayVal = [];
+        $keyFinal = [];
+        $wherereq = "";
+        $update= "";
 
         foreach ($array as $key => $value) {
-            array_push($updateQuery, ":" . $array[$key]);
-            array_push($array1, $value);
+            $arrayVal[':' . $key] = $value;
+            $keyFinal[$key] = ":" . $key;
         }
 
-        $insert = "UPDATE " . $tableName . " SET (". implode(',',array_merge($updateQuery, $array1)) . ")";
-        echo $insert;
-        // $this->query($insert, $insertToQuery);
+        foreach ($keyFinal as $key => $value) {
+            if($keyFinal)
+            $update .= $key . "=" . $value . ", ";
+        }
+
+        foreach ($where as $key => $value) {
+            $wherereq .= $key . "=" . $value;
+        }
+
+        $insert = "UPDATE " . $tableName . " SET " . rtrim($update, ", ") . " where " . $wherereq;
+        $this->query($insert, $arrayVal);
+    }
+
+    function delete($tableName, $where)
+    {
+        $wherereq = "";
+
+        foreach ($where as $key => $value) {
+            $wherereq .= $key . "=" . $value;
+        }
+
+        $insert = "DELETE FROM " . $tableName . " where " . $wherereq;
+        var_dump($where);
+        $this->query($insert, $where);
     }
 
     function getResult()
