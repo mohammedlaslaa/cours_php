@@ -1,0 +1,7 @@
+AuthName "Page d'administration protégée"
+AuthType Basic
+AuthUserFile "C:\wamp64\www\cours_php\projetlist\.htpasswd"
+Require valid-user
+
+
+ErrorDocument 404 /404.php
