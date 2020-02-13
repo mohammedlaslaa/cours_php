@@ -8,7 +8,7 @@ class Db
     private $_pdo;
     private $_sth;
     private $_res;
-    private $_rowcount;
+    private $_rowCount;
     private $_lastInsertId;
     private $_error = false;
 
@@ -36,59 +36,72 @@ class Db
                 $this->_rowCount = $this->_sth->rowCount();
                 $this->_lastInsertId = $this->_pdo->lastInsertId();
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
+            $this->_pdo->rollBack();
             $this->_error = true;
             echo "Error !!!!" . $e->getMessage();
         }
     }
 
+    function select($tableName, array $where = [])
+    {
+        $wherereq = "";
+
+        if (count($where) == 0) {
+            $insert = "SELECT * FROM " . $tableName;
+        } else{
+            foreach ($where as $key => $value) {
+                $wherereq .= $key . "=" . $value;
+            }
+            $insert = "SELECT * FROM " . $tableName . " where " . $wherereq;
+            
+        }
+        $this->query($insert);
+    }
+
     function insert($tableName, $array)
     {
         $insertToQuery = [];
-
         foreach ($array as $key => $value) {
             $insertToQuery[':' . $key] = $value;
         }
         $insert = "INSERT INTO " . $tableName . " (" . implode(',', array_keys($array)) . ") " . "values(" . implode(',', array_keys($insertToQuery)) . ")";
+        echo $this->getRowCount();
         $this->query($insert, $insertToQuery);
     }
 
     function update($tableName, $array, $where)
     {
         $arrayVal = [];
-        $keyFinal = [];
-        $wherereq = "";
-        $update = "";
+        $wherereq = [];
+        $update = [];
 
         foreach ($array as $key => $value) {
             $arrayVal[':' . $key] = $value;
-            $keyFinal[$key] = ":" . $key;
-        }
-
-        foreach ($keyFinal as $key => $value) {
-            if ($keyFinal)
-                $update .= $key . "=" . $value . ", ";
+            $update[] = $key . "= :" . $key;
         }
 
         foreach ($where as $key => $value) {
-            $wherereq .= $key . "=" . $value;
+            $wherereq[] = $key . "=" . $value;
         }
 
-        $insert = "UPDATE " . $tableName . " SET " . rtrim($update, ", ") . " where " . $wherereq;
+        $insert = "UPDATE " . $tableName . " SET " . implode(' , ', $update) . " WHERE " . implode(' AND ', $wherereq);
         $this->query($insert, $arrayVal);
     }
 
     function delete($tableName, $where)
     {
         $wherereq = "";
+        $whereval = [];
 
         foreach ($where as $key => $value) {
             $wherereq .= $key . "=" . $value;
+            $whereval[$value] = $key;
         }
 
         $insert = "DELETE FROM " . $tableName . " where " . $wherereq;
-        var_dump($where);
-        $this->query($insert, $where);
+        var_dump($whereval);
+        $this->query($insert, $whereval);
     }
 
     function getResult()
@@ -103,7 +116,7 @@ class Db
 
     function getRowCount()
     {
-        return $this->_rowcount;
+        return $this->_rowCount;
     }
 
     function getLastInsertId()

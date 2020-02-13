@@ -1,10 +1,6 @@
 <?php
 require('./config/db.php');
 
-$sql = "SELECT * FROM `users` WHERE users.id_user = :iduser";
-$id = [':iduser' => $_GET['id']];
-$dbh->query($sql, $id);
-$user = $dbh->getResult();
 
 if (isset($_POST['lastname'])) {
 
@@ -21,6 +17,11 @@ if (isset($_POST['lastname'])) {
   $dbh->update('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd], ["users.id_user" => $getid]);
   header("Location: index.php");
 }
+
+$sql = "users";
+$id = ['users.id_user' => $_GET['id']];
+$dbh->select($sql, $id);
+$user = $dbh->getResult();
 
 ?>
 
