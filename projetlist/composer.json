@@ -1,0 +1,13 @@
+{
+    "name": "62014-70-05/projetlist",
+    "authors": [
+        {
+            "name": "Laslaa",
+            "email": "mohamed.laslaa@gmail.com"
+        }
+    ],
+    "require": {
+        "spipu/html2pdf": "^5.2",
+        "dompdf/dompdf": "^0.8.4"
+    }
+}

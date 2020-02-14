@@ -11,7 +11,17 @@ if (isset($_POST['lastname'])) {
   $mail = htmlspecialchars($_POST['mail']);
   $pwd = $_POST['pwd'];
 
-  $dbh->insert('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd]);
+  $dbh->insert('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city' => $city, 'email' => $mail, 'password' => $pwd]);
+
+
+  $userObject = new stdClass;
+  $userObject->name = $lastname;
+  $userObject->firstname = $firstname;
+  $userObject->address = $address;
+  $userObject->status = "Best";
+
+  var_dump($userObject);
+
   header("Location: index.php");
 }
 
@@ -24,7 +34,7 @@ if (isset($_POST['lastname'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <title>Document</title>
+  <title>Ajouter utilisateur</title>
 </head>
 
 <body class="container">

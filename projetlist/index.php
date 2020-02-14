@@ -1,6 +1,12 @@
 <?php
 require('./config/db.php');
 require('./config/function.php');
+require __DIR__ . '/vendor/autoload.php';
+
+use Spipu\Html2Pdf\Html2Pdf;
+use Dompdf\Dompdf;
+
+ob_start();
 
 if (isset($_GET['warning'])) {
     echo "<p class='text-center text-white bg-danger'>Attention impossible de supprimer l'utilisateur en vue de ses dépendances, il a donc été désactiver</p>";
@@ -10,13 +16,16 @@ $dbh->select($sql);
 $nb = $dbh->getResult();
 $count = $dbh->getRowCount();
 
-if(isset($_GET['desactivateuser'])){
+
+
+if (isset($_GET['desactivateuser'])) {
     isActivate($dbh, $_GET['desactivateuser'], 0);
 }
 
-if(isset($_GET['activateuser'])){
+if (isset($_GET['activateuser'])) {
     isActivate($dbh, $_GET['activateuser'], 1);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -31,8 +40,11 @@ if(isset($_GET['activateuser'])){
 
 <body>
     <table class="table">
-        <?php $resultcount = ($count>1) ? "Il y a $count utilisateurs" : "Il y a $count utilisateur"; ?>
-        <p><?= $resultcount ?></p>
+        <?php $resultcount = ($count > 1) ? "Il y a $count utilisateurs" : "Il y a $count utilisateur"; ?>
+        <p><?=
+                $resultcount;
+
+            ?></p>
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -53,6 +65,9 @@ if(isset($_GET['activateuser'])){
                 echo "<th>" . $value["id_user"] . "</th>";
                 echo "<th>" . utf8_encode($value["name"]) . "</th>";
                 echo "<th>" . utf8_encode($value["firstname"]) . "</th>";
+                $html = ob_get_contents();
+                ob_get_clean();
+                echo $html;
                 echo "<th>" . $value["email"] . "</th>";
                 echo "<th><a href=listescourses?id=" . $value["id_user"] . ">Voir les listes</a></th>";
                 echo $valueActivate;
@@ -63,7 +78,23 @@ if(isset($_GET['activateuser'])){
             ?>
         </tbody>
     </table>
+    <?php
+    if (isset($_GET['pdf'])) {
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        $dompdf->stream();
+        //     $html2pdf = new Html2Pdf("p", "A4", "fr");
+        //     $html2pdf->writeHTML($html);
+        //     $html2pdf->output();
+    }
+
+    ?>
+
     <button type="button" class="btn btn-primary"><a href="adduser.php" class="text-white text-decoration-none">Créer un utilisateur</a></button>
+    <button type="button" class="btn btn-primary"><a href="?pdf" class="text-white text-decoration-none">Télécharger les utilisateurs !</a></button>
+
 </body>
 
 </html>
