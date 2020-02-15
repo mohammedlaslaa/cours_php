@@ -9,5 +9,10 @@
     "require": {
         "spipu/html2pdf": "^5.2",
         "dompdf/dompdf": "^0.8.4"
+    },
+    "config": {
+        "platform": {
+            "php": "7.3.1"
+        }
     }
 }

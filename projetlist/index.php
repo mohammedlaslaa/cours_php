@@ -6,7 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Spipu\Html2Pdf\Html2Pdf;
 use Dompdf\Dompdf;
 
-ob_start();
+
 
 if (isset($_GET['warning'])) {
     echo "<p class='text-center text-white bg-danger'>Attention impossible de supprimer l'utilisateur en vue de ses dépendances, il a donc été désactiver</p>";
@@ -25,7 +25,7 @@ if (isset($_GET['desactivateuser'])) {
 if (isset($_GET['activateuser'])) {
     isActivate($dbh, $_GET['activateuser'], 1);
 }
-
+ob_start();
 ?>
 
 <!DOCTYPE html>
@@ -65,9 +65,6 @@ if (isset($_GET['activateuser'])) {
                 echo "<th>" . $value["id_user"] . "</th>";
                 echo "<th>" . utf8_encode($value["name"]) . "</th>";
                 echo "<th>" . utf8_encode($value["firstname"]) . "</th>";
-                $html = ob_get_contents();
-                ob_get_clean();
-                echo $html;
                 echo "<th>" . $value["email"] . "</th>";
                 echo "<th><a href=listescourses?id=" . $value["id_user"] . ">Voir les listes</a></th>";
                 echo $valueActivate;
@@ -78,13 +75,18 @@ if (isset($_GET['activateuser'])) {
             ?>
         </tbody>
     </table>
+
     <?php
+    $output = ob_get_contents();
+    if (ob_get_contents()) ob_end_flush();
+
     if (isset($_GET['pdf'])) {
         $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
+        $dompdf->loadHtml($output);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
-        $dompdf->stream();
+        $out = $dompdf->output();
+        file_put_contents('filename.pdf', $out);
         //     $html2pdf = new Html2Pdf("p", "A4", "fr");
         //     $html2pdf->writeHTML($html);
         //     $html2pdf->output();
