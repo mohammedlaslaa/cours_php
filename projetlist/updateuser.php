@@ -1,23 +1,5 @@
 <?php
 require('./config/db.php');
-
-
-if (isset($_POST['lastname'])) {
-
-  $sql = "UPDATE `users` SET `name`=:lastname,`firstname`=:firstname,`address`=:address,`zipcode`=:zipcode,`city`=:city,`email`=:mail,`password`=:pwd where users.id_user = :id";
-  
-  $lastname = htmlspecialchars($_POST['lastname']);
-  $firstname = htmlspecialchars($_POST['firstname']);
-  $address = htmlspecialchars($_POST['adress']);
-  $zipcode = htmlspecialchars($_POST['zipcode']);
-  $city = htmlspecialchars($_POST['city']);
-  $mail = htmlspecialchars($_POST['mail']);
-  $pwd = utf8_encode(htmlspecialchars($_POST['pwd']));
-  $getid = $_GET['id'];
-  $dbh->update('users', ['name' => $lastname, 'firstname' => $firstname, 'address' => $address, 'zipcode' => $zipcode, 'city'=> $city, 'email' => $mail, 'password' => $pwd], ["users.id_user" => $getid]);
-  header("Location: index.php");
-}
-
 $sql = "users";
 $id = ['users.id_user' => $_GET['id']];
 $dbh->select($sql, $id);
@@ -37,7 +19,7 @@ $user = $dbh->getResult();
 
 <body class="container">
   <div class="w-50 mx-auto">
-    <form method="post">
+    <form class="formupdate" method="POST">
       <div class="form-group">
         <label for="lastname">Nom</label>
         <input type="text" class="form-control" id="lastname" name="lastname" value="<?php echo $user[0]["name"]; ?>">
@@ -65,11 +47,13 @@ $user = $dbh->getResult();
       <div class="form-group">
         <label for="pwd">Password:</label>
         <input type="password" class="form-control" id="pwd" name="pwd" value="<?php echo $user[0]["password"]; ?>">
+        <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
       </div>
       <button type="submit" class="btn btn-default btn-secondary">Enregister</button>
     </form>
   </div>
-
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="index.js"></script>
 
 </body>
 

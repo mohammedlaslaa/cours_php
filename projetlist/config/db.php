@@ -31,10 +31,10 @@ class Db
         try {
             $this->_pdo->beginTransaction();
             if ($this->_sth->execute($array)) {
+                $this->_lastInsertId = $this->_pdo->lastInsertId();
                 $this->_pdo->commit();
                 $this->_res = $this->_sth->fetchAll();
                 $this->_rowCount = $this->_sth->rowCount();
-                $this->_lastInsertId = $this->_pdo->lastInsertId();
             }
         } catch (PDOException $e) {
             $this->_pdo->rollBack();
@@ -68,6 +68,7 @@ class Db
         $insert = "INSERT INTO " . $tableName . " (" . implode(',', array_keys($array)) . ") " . "values(" . implode(',', array_keys($insertToQuery)) . ")";
         echo $this->getRowCount();
         $this->query($insert, $insertToQuery);
+        return $this->getLastInsertId();
     }
 
     function update($tableName, $array, $where)
