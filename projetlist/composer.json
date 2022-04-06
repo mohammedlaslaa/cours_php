@@ -8,7 +8,7 @@
     ],
     "require": {
         "spipu/html2pdf": "^5.2",
-        "dompdf/dompdf": "^0.8.4"
+        "dompdf/dompdf": "^1.2.1"
     },
     "config": {
         "platform": {
